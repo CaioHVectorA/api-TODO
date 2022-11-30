@@ -1,0 +1,11 @@
+
+    Perfil
+        Name
+        Senha
+        Foto?
+    TodoList
+        Data
+        User(s)
+        
+Como vai funfar pra varios poderem editar um todo?    
+
