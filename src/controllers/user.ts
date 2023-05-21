@@ -1,7 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { model, Schema } from "mongoose";
 import { Response, Request } from "express";
-
 interface user {
   username: string;
   id: string;
@@ -38,19 +37,17 @@ class UserController {
     }
   }
   public async Create(req: Request, res: Response) {
-    console.log(req.body);
-    return res.json({ teste: "teste" });
-    // const { username, password } = req.body;
-    // if (!username || !password) {
-    //   return res.status(202).json({ error: "Sem credenciais!" });
-    // }
-    // const newUser = {
-    //   username,
-    //   password,
-    //   id: uuid(),
-    // };
-    // await User.create(newUser);
-    // return res.status(201).json({ message: "Criado com sucesso!" });
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(202).json({ error: "Sem credenciais!" });
+    }
+    const newUser = {
+      username,
+      password,
+      id: uuid(),
+    };
+    await User.create(newUser);
+    return res.status(201).json({ message: "Criado com sucesso!" });
   }
   public async Update(req: Request, res: Response) {
     const ID = req.params.id;
