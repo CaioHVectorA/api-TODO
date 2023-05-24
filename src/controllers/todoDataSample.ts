@@ -41,13 +41,22 @@ class SampleTodoController {
     return res.json(db);
   }
   public async Create(req: Request, res: Response) {
-    const JSON_Recebido = req.body;
-    console.log(req.body);
-    if (!JSON_Recebido || typeof JSON_Recebido == "string") {
-      return res.status(404).json({ error: "JSON NÃO RECEBIDO." });
+    // request example:
+    // {
+    //   User: USER
+    //   JSON: JSON,
+    // }
+    const { User, Data } = req.body;
+    console.log(User, Data);
+    if (!Data || !User) {
+      return res.status(404).json({ error: "Dados Insuficientes" });
     }
-    await todoModel.create(JSON_Recebido);
-    return res.status(201).json({ message: JSON_Recebido });
+    const newTodo = await todoModel.create({
+      key: User,
+      todoKey: uuid(),
+      value: Data
+    });
+    return res.json(newTodo);
   }
 }
 export default SampleTodoController;
