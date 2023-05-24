@@ -1,18 +1,7 @@
 import { v4 as uuid } from "uuid";
-import { model, Schema } from "mongoose";
+import { model } from "mongoose";
 import { Response, Request } from "express";
-interface user {
-  username: string;
-  id: string;
-  password: string;
-  image?: string;
-}
-const user_schema = new Schema<user>({
-  username: { type: String, required: true },
-  id: String,
-  password: { type: String, required: true },
-  image: String,
-});
+import { user, user_schema } from "../models";
 
 const User = model<user>("User", user_schema);
 
@@ -36,8 +25,26 @@ class UserController {
       return res.status(404).json({ message: "Not Found" });
     }
   }
+  public async getOneByName(req: Request, res: Response) {
+    const name = req.params.name;
+    const userFound = await User.findOne({ username: name });
+    if (userFound) {
+      return res.json(userFound);
+    } else {
+      return res.status(404).json({ message: "Usuário Não encontrado!" });
+    }
+  }
   public async Create(req: Request, res: Response) {
     const { username, password } = req.body;
+    const userExists = await User.findOne({ username: username });
+    console.log(userExists);
+    console.log(username, password);
+    if (userExists) {
+      return res
+        .status(401)
+        .json({ error: "Já existe um usuário com esse nome!" });
+    }
+    console.log(req.body);
     if (!username || !password) {
       return res.status(202).json({ error: "Sem credenciais!" });
     }
@@ -51,16 +58,19 @@ class UserController {
   }
   public async Update(req: Request, res: Response) {
     const ID = req.params.id;
+    console.log(ID);
     const { username, password, image } = req.body;
+    console.log(username, password);
     const usuario = await User.findOne({ id: ID });
     if (usuario) {
       usuario.username = username || usuario.username;
       usuario.password = password || usuario.password;
       usuario.image = image || usuario.image || null;
       usuario.id = usuario.id;
-      return res.json(usuario);
+      const updatedUser = await User.findOneAndUpdate({ id: ID }, usuario);
+      return res.json(updatedUser);
     } else {
-      return res.status(404).json({ message: "Not FOund" });
+      return res.status(404).json({ message: "Not Found" });
     }
   }
   public async Delete(req: Request, res: Response) {
