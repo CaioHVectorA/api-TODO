@@ -35,3 +35,15 @@ export const todoList_schema = new Schema<todoList>({
   id: String,
   Users: Array,
 });
+
+export interface todoListSampleInterface {
+  key: any;
+  todoKey: any;
+  value: any;
+}
+
+export const todoListSample_Schema = new Schema<todoListSampleInterface>({
+  key: String,
+  todoKey: String,
+  value: String,
+});
